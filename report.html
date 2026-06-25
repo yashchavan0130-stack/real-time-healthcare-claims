@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doctor Report</title>
+  <style>
+    :root{
+      --bg:#eef4fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --primary:#2563eb;
+      --primary-2:#1d4ed8;
+      --success:#16a34a;
+      --warning:#f59e0b;
+      --danger:#dc2626;
+      --line:#e5e7eb;
+      --shadow:0 10px 30px rgba(15,23,42,.10);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    body{
+      margin:0;
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.12), transparent 30%),
+        radial-gradient(circle at top right, rgba(22,163,74,.10), transparent 28%),
+        var(--bg);
+      color:var(--text);
+      padding:24px;
+    }
+
+    .container{
+      max-width:1100px;
+      margin:auto;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      margin-bottom:20px;
+      flex-wrap:wrap;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+
+    .logo{
+      width:54px;
+      height:54px;
+      border-radius:16px;
+      background:linear-gradient(135deg,var(--primary),#60a5fa);
+      display:grid;
+      place-items:center;
+      color:#fff;
+      font-weight:700;
+      box-shadow:var(--shadow);
+    }
+
+    .brand h1{
+      margin:0;
+      font-size:24px;
+    }
+
+    .brand p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      border:none;
+      cursor:pointer;
+      padding:12px 16px;
+      border-radius:12px;
+      font-weight:600;
+      transition:.2s ease;
+    }
+
+    .btn.primary{
+      background:var(--primary);
+      color:#fff;
+    }
+
+    .btn.primary:hover{background:var(--primary-2)}
+    .btn.light{
+      background:#fff;
+      color:var(--text);
+      border:1px solid var(--line);
+    }
+
+    .report{
+      background:rgba(255,255,255,.75);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.6);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .hero{
+      padding:26px;
+      background:linear-gradient(135deg, #eff6ff, #ffffff);
+      border-bottom:1px solid var(--line);
+      display:grid;
+      grid-template-columns:2fr 1fr;
+      gap:18px;
+    }
+
+    .hero-left{
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      gap:14px;
+    }
+
+    .title-row{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .pill{
+      padding:6px 12px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:700;
+      background:#dbeafe;
+      color:#1d4ed8;
+    }
+
+    .meta{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+      margin-top:10px;
+    }
+
+    .meta-card, .info-card, .summary-card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:0 4px 16px rgba(15,23,42,.04);
+    }
+
+    .meta-card{
+      padding:14px 16px;
+    }
+
+    .meta-card span{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:5px;
+    }
+
+    .meta-card strong{
+      font-size:15px;
+    }
+
+    .hero-right{
+      display:grid;
+      gap:12px;
+    }
+
+    .summary-card{
+      padding:18px;
+    }
+
+    .summary-card h3{
+      margin:0 0 10px;
+      font-size:16px;
+    }
+
+    .summary-item{
+      display:flex;
+      justify-content:space-between;
+      padding:10px 0;
+      border-top:1px dashed var(--line);
+      font-size:14px;
+    }
+
+    .summary-item:first-of-type{border-top:none;padding-top:0}
+    .summary-item strong{font-weight:700}
+    .good{color:var(--success)}
+    .warn{color:var(--warning)}
+    .bad{color:var(--danger)}
+
+    .content{
+      padding:26px;
+      display:grid;
+      gap:20px;
+    }
+
+    .section h2{
+      margin:0 0 14px;
+      font-size:18px;
+    }
+
+    .cards{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:14px;
+    }
+
+    .info-card{
+      padding:16px;
+      min-height:120px;
+    }
+
+    .info-card .label{
+      color:var(--muted);
+      font-size:13px;
+      margin-bottom:6px;
+    }
+
+    .info-card .value{
+      font-size:18px;
+      font-weight:800;
+      margin-bottom:8px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .badge.success{background:#dcfce7;color:#166534}
+    .badge.warning{background:#fef3c7;color:#92400e}
+    .badge.danger{background:#fee2e2;color:#991b1b}
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      overflow:hidden;
+      border-radius:16px;
+      background:#fff;
+      border:1px solid var(--line);
+    }
+
+    th, td{
+      padding:14px 12px;
+      text-align:left;
+      border-bottom:1px solid var(--line);
+      font-size:14px;
+    }
+
+    th{
+      background:#f8fafc;
+      color:#334155;
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+    }
+
+    tr:last-child td{border-bottom:none}
+
+    .timeline{
+      display:grid;
+      gap:12px;
+    }
+
+    .note{
+      padding:16px;
+      border-left:5px solid var(--primary);
+      background:#eff6ff;
+      border-radius:14px;
+      line-height:1.6;
+    }
+
+    .footer{
+      padding:20px 26px 28px;
+      color:var(--muted);
+      font-size:13px;
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+      border-top:1px solid var(--line);
+      background:#fbfdff;
+    }
+
+    @media print{
+      body{background:#fff;padding:0}
+      .topbar, .actions, .footer .no-print{display:none !important;}
+      .report{box-shadow:none;border:none;border-radius:0}
+      .hero{background:#fff}
+      .meta-card, .info-card, .summary-card, table{box-shadow:none}
+    }
+
+    @media (max-width: 900px){
+      .hero{grid-template-columns:1fr}
+      .cards{grid-template-columns:1fr}
+      .meta{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">DR</div>
+        <div>
+          <h1>Medical Report</h1>
+          <p>Patient summary, tests, diagnosis, and recommendations</p>
+        </div>
+      </div>
+      <div class="actions no-print">
+        <button class="btn light" onclick="toggleTheme()">Toggle Theme</button>
+        <button class="btn primary" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </div>
+
+    <div class="report" id="report">
+      <div class="hero">
+        <div class="hero-left">
+          <div>
+            <div class="title-row">
+              <h2 style="margin:0;">Patient Report</h2>
+              <span class="pill" id="reportStatus">Stable</span>
+            </div>
+            <p style="margin:8px 0 0;color:var(--muted);">
+              Complete health overview with lab findings and doctor notes.
+            </p>
+          </div>
+
+          <div class="meta">
+            <div class="meta-card">
+              <span>Patient Name</span>
+              <strong>Rohit</strong>
+            </div>
+            <div class="meta-card">
+              <span>Report ID</span>
+              <strong>MR-2026-0621</strong>
+            </div>
+            <div class="meta-card">
+              <span>Doctor Name</span>
+              <strong>Dr. Priya Sharma</strong>
+            </div>
+            <div class="meta-card">
+              <span>Date</span>
+              <strong>21 June 2026</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="summary-card">
+            <h3>Quick Summary</h3>
+            <div class="summary-item">
+              <span>Age</span>
+              <strong>22</strong>
+            </div>
+            <div class="summary-item">
+              <span>Gender</span>
+              <strong>Male</strong>
+            </div>
+            <div class="summary-item">
+              <span>Blood Sugar</span>
+              <strong class="warn">108 mg/dL</strong>
+            </div>
+            <div class="summary-item">
+              <span>Overall</span>
+              <strong class="good">Good</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="section">
+          <h2>Patient Details</h2>
+          <div class="cards">
+            <div class="info-card">
+              <div class="label">Address</div>
+              <div class="value">Pune, Maharashtra</div>
+              <span class="badge success">Verified</span>
+            </div>
+            <div class="info-card">
+              <div class="label">Department</div>
+              <div class="value">General Medicine</div>
+              <span class="badge warning">Follow-up</span>
+            </div>
+            <div class="info-card">
+              <div class="label">Visit Type</div>
+              <div class="value">Outpatient</div>
+              <span class="badge success">Routine Checkup</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Test Results</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Test</th>
+                <th>Result</th>
+                <th>Normal Range</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Hemoglobin</td>
+                <td>14.2 g/dL</td>
+                <td>13–17 g/dL</td>
+                <td><span class="badge success">Normal</span></td>
+              </tr>
+              <tr>
+                <td>Fasting Blood Sugar</td>
+                <td>108 mg/dL</td>
+                <td>70–100 mg/dL</td>
+                <td><span class="badge warning">Slightly High</span></td>
+              </tr>
+              <tr>
+                <td>Cholesterol</td>
+                <td>185 mg/dL</td>
+                <td>Below 200 mg/dL</td>
+                <td><span class="badge success">Normal</span></td>
+              </tr>
+              <tr>
+                <td>WBC Count</td>
+                <td>7,200 /mm³</td>
+                <td>4,500–11,000 /mm³</td>
+                <td><span class="badge success">Normal</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section">
+          <h2>Diagnosis</h2>
+          <div class="note">
+            Mild elevation in fasting blood sugar levels. No other major abnormalities detected.
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Recommendations</h2>
+          <div class="timeline">
+            <div class="note">Maintain a balanced diet with reduced sugar intake.</div>
+            <div class="note">Exercise for at least 30 minutes daily.</div>
+            <div class="note">Recheck fasting blood sugar after 1 month.</div>
+            <div class="note">Avoid junk food and drink enough water.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div>Doctor Signature: ____________________</div>
+        <div class="no-print">Use the print button to save as PDF.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const root = document.documentElement;
+      const dark = root.dataset.theme === "dark";
+      if (dark) {
+        root.dataset.theme = "light";
+        document.body.style.background = "";
+        document.querySelectorAll(".report, .meta-card, .info-card, .summary-card").forEach(el => el.style.background = "");
+      } else {
+        root.dataset.theme = "dark";
+        document.body.style.background = "#0f172a";
+        document.querySelectorAll(".report").forEach(el => el.style.background = "rgba(15,23,42,.92)");
+        document.querySelectorAll(".meta-card, .info-card, .summary-card").forEach(el => el.style.background = "#111827");
+      }
+    }
+
+    const sugar = 108;
+    const status = document.getElementById("reportStatus");
+    if (sugar <= 100) {
+      status.textContent = "Normal";
+      status.style.background = "#dcfce7";
+      status.style.color = "#166534";
+    } else if (sugar <= 125) {
+      status.textContent = "Needs Attention";
+      status.style.background = "#fef3c7";
+      status.style.color = "#92400e";
+    } else {
+      status.textContent = "Critical";
+      status.style.background = "#fee2e2";
+      status.style.color = "#991b1b";
+    }
+    
+  </script>
+  <ul>
+    <li><a href="Session%20Management.html"><i class="fa-solid fa-file-medical"></i>Next</a></li>
+    </ul>
+</body>
+</html>

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient Management System</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f7fb;
+      color: #222;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+      color: white;
+      padding: 20px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 6px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      border-left: 5px solid #3b82f6;
+    }
+
+    .card h3 {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      font-size: 24px;
+      font-weight: bold;
+      color: #1d4ed8;
+    }
+
+    .topbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .btn-primary {
+      background: #1d4ed8;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1e40af;
+    }
+
+    .btn-danger {
+      background: #dc2626;
+      color: white;
+    }
+
+    .btn-edit {
+      background: #2563eb;
+      color: white;
+    }
+
+    .btn-view {
+      background: #7c3aed;
+      color: white;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      margin-bottom: 20px;
+    }
+
+    .panel h2 {
+      margin-bottom: 15px;
+      color: #1d4ed8;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 14px;
+      color: #444;
+      font-weight: bold;
+    }
+
+    .field input, .field select, .field textarea {
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      outline: none;
+      font-size: 14px;
+      width: 100%;
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 42px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px;
+    }
+
+    th, td {
+      padding: 14px;
+      border-bottom: 1px solid #e2e8f0;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    tr:hover {
+      background: #f8fafc;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      padding: 20px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 14px;
+      padding: 22px;
+      max-width: 520px;
+      width: 100%;
+    }
+
+    .modal-content h3 {
+      margin-bottom: 12px;
+      color: #1d4ed8;
+    }
+
+    .modal-content p {
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    .modal-close {
+      margin-top: 16px;
+      background: #1d4ed8;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Patient Management System</h1>
+      <p>Register, search, update, and manage patient records easily.</p>
+    </div>
+
+    <div class="stats">
+      <div class="card">
+        <h3>Total Patients</h3>
+        <p id="totalPatients">18,520</p>
+      </div>
+      <div class="card">
+        <h3>Male Patients</h3>
+        <p id="malePatients">1,000</p>
+      </div>
+      <div class="card">
+        <h3>Female Patients</h3>
+        <p id="femalePatients">8,520</p>
+      </div>
+      <div class="card">
+        <h3>Today Appointments</h3>
+        <p id="todayAppointments">600</p>
+      </div>
+    </div>
+
+    <div class="topbar">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search patient by name, id, phone, or disease..." />
+      </div>
+      <button class="btn btn-primary" onclick="scrollToForm()">Register Patient</button>
+    </div>
+
+    <div class="panel" id="formSection">
+      <h2>Register Patient</h2>
+      <form id="patientForm">
+        <div class="field">
+          <label>Patient Name</label>
+          <input type="text" id="name" required />
+        </div>
+        <div class="field">
+          <label>Age</label>
+          <input type="number" id="age" required min="1" />
+        </div>
+        <div class="field">
+          <label>Gender</label>
+          <select id="gender" required>
+            <option value="">Select</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Phone</label>
+          <input type="tel" id="phone" required />
+        </div>
+        <div class="field">
+          <label>Blood Group</label>
+          <input type="text" id="bloodGroup" placeholder="A+, B+, O-" required />
+        </div>
+        <div class="field">
+          <label>Disease</label>
+          <input type="text" id="disease" required />
+        </div>
+        <div class="field">
+          <label>Doctor</label>
+          <input type="text" id="doctor" required />
+        </div>
+        <div class="field">
+          <label>Appointment Date</label>
+          <input type="date" id="appointmentDate" required />
+        </div>
+        <div class="field full">
+          <label>Address</label>
+          <textarea id="address" required></textarea>
+        </div>
+        <div class="field full">
+          <button class="btn btn-primary" type="submit" id="submitBtn">Add Patient</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Phone</th>
+            <th>Blood Group</th>
+            <th>Disease</th>
+            <th>Doctor</th>
+            <th>Appointment</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="patientTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="modal" id="viewModal">
+    <div class="modal-content">
+      <h3>Patient Details</h3>
+      <div id="modalBody"></div>
+      <button class="btn modal-close" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    let patients = JSON.parse(localStorage.getItem("patients")) || [];
+    let editIndex = -1;
+
+    const form = document.getElementById("patientForm");
+    const table = document.getElementById("patientTable");
+    const searchInput = document.getElementById("searchInput");
+
+    function saveData() {
+      localStorage.setItem("patients", JSON.stringify(patients));
+    }
+
+    function updateStats() {
+      document.getElementById("totalPatients").textContent = "18,520";
+      document.getElementById("malePatients").textContent = "1,000";
+      document.getElementById("femalePatients").textContent = "8,520";
+      document.getElementById("todayAppointments").textContent = "600";
+    }
+
+    function renderTable(data = patients) {
+      table.innerHTML = "";
+
+      data.forEach((p) => {
+        const realIndex = patients.indexOf(p);
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${p.id}</td>
+          <td>${p.name}</td>
+          <td>${p.age}</td>
+          <td>${p.gender}</td>
+          <td>${p.phone}</td>
+          <td>${p.bloodGroup}</td>
+          <td>${p.disease}</td>
+          <td>${p.doctor}</td>
+          <td>${p.appointmentDate}</td>
+          <td>
+            <div class="actions">
+              <button class="btn btn-view" onclick="viewPatient(${realIndex})">View</button>
+              <button class="btn btn-edit" onclick="editPatient(${realIndex})">Edit</button>
+              <button class="btn btn-danger" onclick="deletePatient(${realIndex})">Delete</button>
+            </div>
+          </td>
+        `;
+        table.appendChild(row);
+      });
+
+      updateStats();
+    }
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const patient = {
+        id: editIndex === -1 ? "P" + String(Date.now()).slice(-6) : patients[editIndex].id,
+        name: document.getElementById("name").value.trim(),
+        age: document.getElementById("age").value.trim(),
+        gender: document.getElementById("gender").value,
+        phone: document.getElementById("phone").value.trim(),
+        bloodGroup: document.getElementById("bloodGroup").value.trim(),
+        disease: document.getElementById("disease").value.trim(),
+        doctor: document.getElementById("doctor").value.trim(),
+        appointmentDate: document.getElementById("appointmentDate").value,
+        address: document.getElementById("address").value.trim()
+      };
+
+      if (editIndex === -1) {
+        patients.push(patient);
+      } else {
+        patients[editIndex] = patient;
+        editIndex = -1;
+        document.getElementById("submitBtn").textContent = "Add Patient";
+      }
+
+      saveData();
+      renderTable();
+      form.reset();
+    });
+
+    searchInput.addEventListener("input", function() {
+      const term = this.value.toLowerCase();
+      const filtered = patients.filter(p =>
+        p.name.toLowerCase().includes(term) ||
+        p.id.toLowerCase().includes(term) ||
+        p.phone.toLowerCase().includes(term) ||
+        p.disease.toLowerCase().includes(term) ||
+        p.doctor.toLowerCase().includes(term)
+      );
+      renderTable(filtered);
+    });
+
+    function deletePatient(index) {
+      if (confirm("Are you sure you want to delete this patient?")) {
+        patients.splice(index, 1);
+        saveData();
+        renderTable();
+      }
+    }
+
+    function editPatient(index) {
+      const p = patients[index];
+      document.getElementById("name").value = p.name;
+      document.getElementById("age").value = p.age;
+      document.getElementById("gender").value = p.gender;
+      document.getElementById("phone").value = p.phone;
+      document.getElementById("bloodGroup").value = p.bloodGroup;
+      document.getElementById("disease").value = p.disease;
+      document.getElementById("doctor").value = p.doctor;
+      document.getElementById("appointmentDate").value = p.appointmentDate;
+      document.getElementById("address").value = p.address;
+
+      editIndex = index;
+      document.getElementById("submitBtn").textContent = "Update Patient";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function viewPatient(index) {
+      const p = patients[index];
+      document.getElementById("modalBody").innerHTML = `
+        <p><b>ID:</b> ${p.id}</p>
+        <p><b>Name:</b> ${p.name}</p>
+        <p><b>Age:</b> ${p.age}</p>
+        <p><b>Gender:</b> ${p.gender}</p>
+        <p><b>Phone:</b> ${p.phone}</p>
+        <p><b>Blood Group:</b> ${p.bloodGroup}</p>
+        <p><b>Disease:</b> ${p.disease}</p>
+        <p><b>Doctor:</b> ${p.doctor}</p>
+        <p><b>Appointment:</b> ${p.appointmentDate}</p>
+        <p><b>Address:</b> ${p.address}</p>
+      `;
+      document.getElementById("viewModal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("viewModal").style.display = "none";
+    }
+
+    function scrollToForm() {
+      document.getElementById("formSection").scrollIntoView({ behavior: "smooth" });
+    }
+
+    document.getElementById("viewModal").addEventListener("click", function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    renderTable();
+  </script>
+</body>
+</html>

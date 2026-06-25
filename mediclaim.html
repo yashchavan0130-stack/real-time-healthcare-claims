@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediClaim AI - Secure Access Portal</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { background-color: #f8fafc; color: #1e293b; }
+        .bg-white { background-color: #ffffff; }
+        .bg-slate-50 { background-color: #f8fafc; }
+        .text-slate-900 { color: #0f172a; }
+        .text-slate-800 { color: #1e293b; }
+        .text-slate-700 { color: #334155; }
+        .text-slate-600 { color: #475569; }
+        .text-slate-500 { color: #64748b; }
+        .border-slate-200, .border-slate-300 { border-color: #e2e8f0; }
+        .bg-slate-100 { background-color: #f1f5f9; }
+        .bg-slate-200 { background-color: #e2e8f0; }
+        .bg-blue-50 { background-color: rgba(37,99,235,.08); }
+        .bg-emerald-50 { background-color: rgba(16,185,129,.08); }
+        .bg-amber-50 { background-color: rgba(245,158,11,.08); }
+        .bg-rose-50 { background-color: rgba(244,63,94,.08); }
+        .bg-purple-50, .bg-purple-50/50 { background-color: rgba(168,85,247,.08); }
+        input, select {
+            background-color: #ffffff !important;
+            color: #1e293b !important;
+            border-color: #cbd5e1 !important;
+        }
+        table { color: #1e293b; }
+        thead tr { background-color: #f8fafc !important; }
+        .modal-panel { background-color: #ffffff; border-color: #e2e8f0; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col transition-colors duration-300">
+
+    <div id="main-portal" class="flex-1 flex flex-col">
+        <header class="border-b border-slate-200 bg-white sticky top-0 z-50 px-6 py-4 flex justify-between items-center shadow-sm transition-colors duration-300">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-2 rounded-lg text-white">
+                    <i data-lucide="activity" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-900">MediClaim <span class="text-blue-600">AI</span></h1>
+                    <p class="text-xs text-slate-500">Real-Time Claims Analytics & Fraud Detection</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="flex items-center gap-2 text-xs bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full border border-emerald-200 font-medium animate-pulse">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Live System Active
+                </span>
+                <div class="text-sm text-slate-600" id="current-time"></div>
+            </div>
+        </header>
+
+        <main class="p-6 max-w-[1600px] mx-auto space-y-6 w-full flex-1">
+            <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white border border-slate-200 rounded-xl p-5 flex items-center justify-between shadow-xs transition-colors duration-300">
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Total Claims Processed</p>
+                        <h3 class="text-3xl font-bold mt-1 text-slate-900" id="kpi-total">1,248</h3>
+                        <p class="text-xs text-emerald-600 mt-1 flex items-center gap-1 font-medium"><i data-lucide="trending-up" class="w-3 h-3"></i> +12% vs last hour</p>
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded-xl text-blue-600"><i data-lucide="file-text" class="w-6 h-6"></i></div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-xl p-5 flex items-center justify-between shadow-xs transition-colors duration-300">
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Total Financial Volume</p>
+                        <h3 class="text-3xl font-bold mt-1 text-slate-900" id="kpi-volume">$2.45M</h3>
+                        <p class="text-xs text-slate-500 mt-1">Avg. $1,960 per claim</p>
+                    </div>
+                    <div class="bg-amber-50 p-3 rounded-xl text-amber-600"><i data-lucide="dollar-sign" class="w-6 h-6"></i></div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-xl p-5 flex items-center justify-between shadow-xs transition-colors duration-300">
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">AI High-Risk Flags</p>
+                        <h3 class="text-3xl font-bold mt-1 text-rose-600" id="kpi-flags">34</h3>
+                        <p class="text-xs text-rose-600 mt-1 flex items-center gap-1 font-medium" id="kpi-flag-rate">2.7% Fraud Risk Rate</p>
+                    </div>
+                    <div class="bg-rose-50 p-3 rounded-xl text-rose-600"><i data-lucide="shield-alert" class="w-6 h-6"></i></div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-xl p-5 flex items-center justify-between shadow-xs transition-colors duration-300">
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Auto-Adjudication Rate</p>
+                        <h3 class="text-3xl font-bold mt-1 text-emerald-600">84.2%</h3>
+                        <p class="text-xs text-slate-500 mt-1">Target benchmark: 80%</p>
+                    </div>
+                    <div class="bg-emerald-50 p-3 rounded-xl text-emerald-600"><i data-lucide="zap" class="w-6 h-6"></i></div>
+                </div>
+            </section>
+
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button data-panel="patients" class="kpi-open bg-white border border-slate-200 rounded-xl p-5 text-left shadow-xs hover:shadow-sm transition-all duration-300">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Total Patients</p>
+                            <h3 class="text-3xl font-bold mt-1 text-slate-900" id="kpi-patients">18,520</h3>
+                            <p class="text-xs text-slate-500 mt-1">Registered patient profiles</p>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-xl text-blue-600"><i data-lucide="users" class="w-6 h-6"></i></div>
+                    </div>
+                </button>
+
+                <button data-panel="doctors" class="kpi-open bg-white border border-slate-200 rounded-xl p-5 text-left shadow-xs hover:shadow-sm transition-all duration-300">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Total Doctors</p>
+                            <h3 class="text-3xl font-bold mt-1 text-slate-900" id="kpi-doctors">1,146</h3>
+                            <p class="text-xs text-slate-500 mt-1">Active medical professionals</p>
+                        </div>
+                        <div class="bg-emerald-50 p-3 rounded-xl text-emerald-600"><i data-lucide="stethoscope" class="w-6 h-6"></i></div>
+                    </div>
+                </button>
+
+                <button data-panel="hospitals" class="kpi-open bg-white border border-slate-200 rounded-xl p-5 text-left shadow-xs hover:shadow-sm transition-all duration-300">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Total Hospitals</p>
+                            <h3 class="text-3xl font-bold mt-1 text-slate-900" id="kpi-hospitals">284</h3>
+                            <p class="text-xs text-slate-500 mt-1">Networked healthcare facilities</p>
+                        </div>
+                        <div class="bg-amber-50 p-3 rounded-xl text-amber-600"><i data-lucide="building-2" class="w-6 h-6"></i></div>
+                    </div>
+                </button>
+            </section>
+
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-5 space-y-6 shadow-xs transition-colors duration-300">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2"><i data-lucide="bar-chart-3" class="text-blue-600 w-5 h-5"></i> Live Analytics Monitoring</h2>
+                        <span class="text-xs text-slate-500">Updates dynamically</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 transition-colors duration-300">
+                            <h4 class="text-sm font-medium text-slate-700 mb-3 text-center">Claims Processing Volume Trends</h4>
+                            <div class="h-64"><canvas id="volumeChart"></canvas></div>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 transition-colors duration-300">
+                            <h4 class="text-sm font-medium text-slate-700 mb-3 text-center">Status Distribution Matrix</h4>
+                            <div class="h-64 flex justify-center"><canvas id="statusChart"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-xl p-5 flex flex-col h-full shadow-xs transition-colors duration-300">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2"><i data-lucide="brain-circuit" class="text-purple-600 w-5 h-5"></i> AI Insights Engine</h2>
+                        <span class="bg-purple-100 text-purple-700 border border-purple-200 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Cognitive</span>
+                    </div>
+                    <div class="space-y-3 flex-1 overflow-y-auto max-h-[350px] pr-1" id="ai-insights-container"></div>
+                </div>
+            </section>
+
+            <section class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                <div class="xl:col-span-2 bg-white border border-slate-200 rounded-xl p-5 flex flex-col shadow-xs transition-colors duration-300">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2"><i data-lucide="layout-list" class="text-emerald-600 w-5 h-5"></i> Live Incoming Claims Stream</h2>
+                            <p class="text-xs text-slate-500">Real-time adjudicating system events ledger</p>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto rounded-lg border border-slate-200">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs font-semibold uppercase tracking-wider">
+                                    <th class="p-3">Claim ID</th>
+                                    <th class="p-3">Provider</th>
+                                    <th class="p-3">Procedure Code</th>
+                                    <th class="p-3">Amount</th>
+                                    <th class="p-3">Risk Assessment</th>
+                                    <th class="p-3 text-right">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="claims-stream-tbody" class="text-sm divide-y divide-slate-100 bg-white"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-xs transition-colors duration-300">
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2 mb-1"><i data-lucide="terminal" class="text-amber-600 w-5 h-5"></i> Operational Simulator</h2>
+                    <p class="text-xs text-slate-500 mb-4">Inject unique claim variables mock scenarios to stress-test real-time AI behavior.</p>
+                    <form id="simulator-form" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Healthcare Provider</label>
+                            <select id="sim-provider" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 text-slate-800">
+                                <option value="Apex Health Medical Center">Apex Health Medical Center</option>
+                                <option value="Metropolitan General Hospital">Metropolitan General Hospital</option>
+                                <option value="St. Jude Urgent Care Lab">St. Jude Urgent Care Lab</option>
+                                <option value="Radiology Partners Inc.">Radiology Partners Inc.</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-500 mb-1">CPT Procedure Code</label>
+                                <select id="sim-cpt" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 text-slate-800">
+                                    <option value="99214 - Outpatient Visit">99214 - Evaluation</option>
+                                    <option value="74177 - CT Scan Abdomen">74177 - CT Scan</option>
+                                    <option value="93000 - Electrocardiogram">93000 - EKG Test</option>
+                                    <option value="36415 - Blood Draw Routine">36415 - Venipuncture</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-500 mb-1">Billed Amount ($)</label>
+                                <input type="number" id="sim-amount" value="1250" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 text-slate-800">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Simulated Anomaly Setting</label>
+                            <select id="sim-anomaly" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 text-slate-800">
+                                <option value="none">Standard Compliant Presentation (Low Risk)</option>
+                                <option value="upcoding">Potential Upcoding Anomaly (High Value Code Modification)</option>
+                                <option value="unbundling">Unbundling Practice Pattern (Split Billing Sequence)</option>
+                                <option value="duplicate">Suspected Duplicate Submission Spike</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 transition-colors text-white text-sm font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 shadow-lg shadow-blue-600/10 cursor-pointer">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i> Inject Simulated Claim
+                        </button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="details-modal" class="fixed inset-0 hidden items-center justify-center bg-black/50 z-[60] p-4">
+        <div class="modal-panel w-full max-w-2xl rounded-2xl border shadow-xl overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200">
+                <div>
+                    <h3 id="modal-title" class="text-xl font-bold text-slate-900">Section</h3>
+                    <p id="modal-subtitle" class="text-sm text-slate-500">Details</p>
+                </div>
+                <button id="modal-close" class="p-2 rounded-lg hover:bg-slate-100 text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-5">
+                <div id="modal-content" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let globalMetrics = { totalClaims: 1248, totalVolume: 2450000, highRiskFlags: 34 };
+        const initialMockClaims = [
+            { id: "CLM-9042", provider: "Metropolitan General", cpt: "74177", amount: 4200, risk: "Low Risk", status: "Approved" },
+            { id: "CLM-9041", provider: "Apex Health Center", cpt: "99214", amount: 310, risk: "Medium Risk", status: "Pending Review" },
+            { id: "CLM-9040", provider: "Radiology Partners", cpt: "74177", amount: 8900, risk: "High Risk", status: "Denied" },
+            { id: "CLM-9039", provider: "St. Jude Urgent Care", cpt: "36415", amount: 95, risk: "Low Risk", status: "Approved" },
+            { id: "CLM-9038", provider: "Apex Health Center", cpt: "93000", amount: 540, risk: "Low Risk", status: "Approved" }
+        ];
+
+        let volumeChart, statusChart;
+        let volumeDataBuffer = [45, 52, 49, 62, 58, 71, 85];
+        let statusCounts = { Approved: 810, Pending: 318, Denied: 120 };
+        let pipelineInterval;
+
+        const detailData = {
+            patients: [
+                ["Registered", "18,520"],
+                ["Active Today", "2,146"],
+                ["High Priority", "318"],
+                ["Coverage Verified", "16,904"]
+            ],
+            doctors: [
+                ["Active Doctors", "1,146"],
+                ["Specialists", "402"],
+                ["General Physicians", "518"],
+                ["On Duty", "214"]
+            ],
+            hospitals: [
+                ["Network Hospitals", "284"],
+                ["Multi-specialty", "126"],
+                ["Diagnostic Centers", "78"],
+                ["Partner Facilities", "80"]
+            ]
+        };
+
+        Chart.defaults.color = '#64748b';
+        Chart.defaults.borderColor = '#e2e8f0';
+
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+            updateTime();
+            setInterval(updateTime, 1000);
+            initCharts();
+            populateInitialClaims();
+            generateAiInsights();
+            pipelineInterval = setInterval(triggerAutomaticPipelineTick, 5000);
+            document.getElementById("simulator-form").addEventListener("submit", handleFormSubmission);
+            document.querySelectorAll('.kpi-open').forEach(btn => btn.addEventListener('click', () => openPanel(btn.dataset.panel)));
+            document.getElementById('modal-close').addEventListener('click', closeModal);
+            document.getElementById('details-modal').addEventListener('click', (e) => { if (e.target.id === 'details-modal') closeModal(); });
+        });
+
+        function updateTime() { document.getElementById("current-time").innerText = new Date().toLocaleString(); }
+
+        function initCharts() {
+            const ctxVolume = document.getElementById('volumeChart').getContext('2d');
+            volumeChart = new Chart(ctxVolume, {
+                type: 'line',
+                data: {
+                    labels: ['10m ago', '8m ago', '6m ago', '4m ago', '2m ago', '1m ago', 'Just Now'],
+                    datasets: [{
+                        label: 'Claims Throughput / min',
+                        data: volumeDataBuffer,
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.05)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b' } },
+                        x: { grid: { display: false }, ticks: { color: '#64748b' } }
+                    }
+                }
+            });
+
+            const ctxStatus = document.getElementById('statusChart').getContext('2d');
+            statusChart = new Chart(ctxStatus, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Approved', 'Pending', 'Denied'],
+                    datasets: [{
+                        data: [statusCounts.Approved, statusCounts.Pending, statusCounts.Denied],
+                        backgroundColor: ['#10b981', '#f59e0b', '#f43f5e'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { color: '#64748b', font: { size: 11 } } } },
+                    cutout: '70%'
+                }
+            });
+        }
+
+        function populateInitialClaims() {
+            const tbody = document.getElementById("claims-stream-tbody");
+            tbody.innerHTML = "";
+            initialMockClaims.forEach(claim => renderClaimRow(claim, false));
+        }
+
+        function renderClaimRow(claim, highlight = false) {
+            const tbody = document.getElementById("claims-stream-tbody");
+            if(!tbody) return;
+
+            let riskBadge = `<span class="bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded-full text-xs border border-emerald-200 font-medium">Low Risk</span>`;
+            if (claim.risk === "Medium Risk") {
+                riskBadge = `<span class="bg-amber-50 text-amber-700 px-2.5 py-0.5 rounded-full text-xs border border-amber-200 font-medium">Medium Risk</span>`;
+            } else if (claim.risk === "High Risk") {
+                riskBadge = `<span class="bg-rose-50 text-rose-700 px-2.5 py-0.5 rounded-full text-xs border border-rose-200 font-medium flex items-center gap-1 w-max"><i data-lucide="alert-triangle" class="w-3 h-3 text-rose-600"></i> High Risk</span>`;
+            }
+
+            let statusBadge = `<span class="text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-200 font-semibold text-xs">Approved</span>`;
+            if (claim.status === "Pending Review") {
+                statusBadge = `<span class="text-amber-700 bg-amber-50 px-2 py-1 rounded border border-amber-200 font-semibold text-xs">Pending</span>`;
+            } else if (claim.status === "Denied") {
+                statusBadge = `<span class="text-rose-700 bg-rose-50 px-2 py-1 rounded border border-rose-200 font-semibold text-xs">Denied</span>`;
+            }
+
+            const row = document.createElement("tr");
+            row.className = `border-b border-slate-100 transition-all duration-500 ${highlight ? 'bg-blue-50 border-l-2 border-l-blue-600' : 'hover:bg-slate-50'}`;
+            row.innerHTML = `
+                <td class="p-3 font-mono text-xs font-semibold text-blue-600">${claim.id}</td>
+                <td class="p-3 font-medium text-slate-800">${claim.provider}</td>
+                <td class="p-3"><span class="bg-slate-100 text-slate-700 font-mono text-xs px-2 py-0.5 rounded border border-slate-200">${claim.cpt}</span></td>
+                <td class="p-3 font-semibold text-slate-900">$${claim.amount.toLocaleString()}</td>
+                <td class="p-3">${riskBadge}</td>
+                <td class="p-3 text-right">${statusBadge}</td>
+            `;
+            tbody.insertBefore(row, tbody.firstChild);
+            if (tbody.children.length > 7) tbody.removeChild(tbody.lastChild);
+            lucide.createIcons();
+            if (highlight) setTimeout(() => { row.classList.remove('bg-blue-50'); }, 2000);
+        }
+
+        function generateAiInsights() {
+            const container = document.getElementById("ai-insights-container");
+            const insights = [
+                { title: "Upcoding Pattern Detected", desc: "Apex Health Center shows a 24% spike in CPT-74177 relative to lower level evaluation codes.", time: "2 mins ago", severity: "high" },
+                { title: "Automated Adjudication Surge", desc: "Auto-approval workflows executed cleanly across 142 routine claims over the last hour.", time: "15 mins ago", severity: "normal" },
+                { title: "Unbundled Lab Panel Alert", desc: "Multiple single panel blood metric codes detected from St. Jude Urgent Care in a 30-minute window.", time: "1 hr ago", severity: "medium" }
+            ];
+
+            container.innerHTML = "";
+            insights.forEach(ins => {
+                let borderClass = "border-l-purple-500 bg-purple-50/50";
+                let icon = `<i data-lucide="shield-alert" class="w-4 h-4 text-purple-600"></i>`;
+                if (ins.severity === 'high') {
+                    borderClass = "border-l-rose-500 bg-rose-50";
+                    icon = `<i data-lucide="alert-octagon" class="w-4 h-4 text-rose-600"></i>`;
+                } else if (ins.severity === 'medium') {
+                    borderClass = "border-l-amber-500 bg-amber-50";
+                    icon = `<i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600"></i>`;
+                } else {
+                    borderClass = "border-l-emerald-500 bg-emerald-50";
+                    icon = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>`;
+                }
+
+                const el = document.createElement("div");
+                el.className = `p-3.5 rounded-lg border border-slate-200 border-l-4 ${borderClass} flex gap-3 text-xs flex-col transition-all hover:border-slate-300 shadow-2xs`;
+                el.innerHTML = `
+                    <div class="flex items-center justify-between font-semibold text-slate-800">
+                        <div class="flex items-center gap-2">${icon} <span>${ins.title}</span></div>
+                        <span class="text-[10px] text-slate-500 font-normal">${ins.time}</span>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed">${ins.desc}</p>
+                `;
+                container.appendChild(el);
+            });
+            lucide.createIcons();
+        }
+
+        function handleFormSubmission(e) {
+            e.preventDefault();
+            const provider = document.getElementById("sim-provider").value;
+            const cptFull = document.getElementById("sim-cpt").value;
+            const cptCode = cptFull.split(" ")[0];
+            const amount = parseFloat(document.getElementById("sim-amount").value) || 0;
+            const anomaly = document.getElementById("sim-anomaly").value;
+
+            let risk = "Low Risk";
+            let status = "Approved";
+            if (anomaly === "upcoding" || amount > 7500) {
+                risk = "High Risk";
+                status = "Denied";
+            } else if (anomaly === "unbundling" || anomaly === "duplicate") {
+                risk = "Medium Risk";
+                status = "Pending Review";
+            }
+
+            const customClaim = {
+                id: `CLM-${Math.floor(1000 + Math.random() * 9000)}`,
+                provider: provider.split(" ")[0] + " " + (provider.split(" ")[1] || ""),
+                cpt: cptCode,
+                amount: amount,
+                risk: risk,
+                status: status
+            };
+
+            globalMetrics.totalClaims += 1;
+            globalMetrics.totalVolume += amount;
+            if (risk === "High Risk") globalMetrics.highRiskFlags += 1;
+            statusCounts[status] += 1;
+
+            updateKpiDisplay();
+            renderClaimRow(customClaim, true);
+            updateChartsDynamically(true);
+            if(anomaly !== "none") injectDynamicAiInsight(customClaim, anomaly);
+        }
+
+        function triggerAutomaticPipelineTick() {
+            const providers = ["Apex Health", "Metropolitan General", "St. Jude Labs", "Radiology Partners"];
+            const cpts = ["99214", "74177", "93000", "36415"];
+            const amounts = [120, 1450, 320, 85, 2100, 95];
+
+            const autoClaim = {
+                id: `CLM-${Math.floor(1000 + Math.random() * 9000)}`,
+                provider: providers[Math.floor(Math.random() * providers.length)],
+                cpt: cpts[Math.floor(Math.random() * cpts.length)],
+                amount: amounts[Math.floor(Math.random() * amounts.length)],
+                risk: "Low Risk",
+                status: "Approved"
+            };
+
+            globalMetrics.totalClaims += 1;
+            globalMetrics.totalVolume += autoClaim.amount;
+            statusCounts.Approved += 1;
+
+            updateKpiDisplay();
+            renderClaimRow(autoClaim, false);
+            updateChartsDynamically(false);
+        }
+
+        function updateKpiDisplay() {
+            document.getElementById("kpi-total").innerText = globalMetrics.totalClaims.toLocaleString();
+            document.getElementById("kpi-volume").innerText = `$${(globalMetrics.totalVolume / 1000000).toFixed(2)}M`;
+            document.getElementById("kpi-flags").innerText = globalMetrics.highRiskFlags;
+            const flagRate = ((globalMetrics.highRiskFlags / globalMetrics.totalClaims) * 100).toFixed(1);
+            document.getElementById("kpi-flag-rate").innerText = `${flagRate}% Fraud Risk Rate`;
+        }
+
+        function updateChartsDynamically(isManualSimulation) {
+            if(isManualSimulation) {
+                volumeDataBuffer[volumeDataBuffer.length - 1] += 1;
+            } else {
+                volumeDataBuffer.shift();
+                volumeDataBuffer.push(Math.floor(40 + Math.random() * 50));
+            }
+            volumeChart.update();
+            statusChart.data.datasets[0].data = [statusCounts.Approved, statusCounts.Pending, statusCounts.Denied];
+            statusChart.update();
+        }
+
+        function injectDynamicAiInsight(claim, type) {
+            const container = document.getElementById("ai-insights-container");
+            let title = "AI Anomaly Triggered";
+            let desc = "";
+            let border = "border-l-rose-500 bg-rose-50";
+            let icon = `<i data-lucide="alert-octagon" class="w-4 h-4 text-rose-600"></i>`;
+
+            if (type === "upcoding") {
+                title = "Upcoding Flag: " + claim.id;
+                desc = `Claim value $${claim.amount} for CPT ${claim.cpt} deviates from metrics for ${claim.provider}. Rejection sequence automated.`;
+            } else if (type === "unbundling") {
+                title = "Unbundling Pipeline Exception";
+                desc = `Identified fragmented cross-billing sequences for actions tied to ${claim.id}. Routed to secondary triage teams.`;
+                border = "border-l-amber-500 bg-amber-50";
+                icon = `<i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600"></i>`;
+            } else if (type === "duplicate") {
+                title = "Double-Billing Warning Sequence";
+                desc = `Identified matching cross-party parameters with high collision signatures within baseline boundaries. Verification required.`;
+                border = "border-l-amber-500 bg-amber-50";
+                icon = `<i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600"></i>`;
+            }
+
+            const el = document.createElement("div");
+            el.className = `p-3.5 rounded-lg border border-slate-200 border-l-4 ${border} flex gap-3 text-xs flex-col animate-bounce shadow-sm`;
+            el.innerHTML = `
+                <div class="flex items-center justify-between font-semibold text-slate-800">
+                    <div class="flex items-center gap-2">${icon} <span>${title}</span></div>
+                    <span class="text-[10px] text-blue-600 font-normal">Just Now</span>
+                </div>
+                <p class="text-slate-600 leading-relaxed">${desc}</p>
+            `;
+            container.insertBefore(el, container.firstChild);
+            lucide.createIcons();
+            setTimeout(() => { el.classList.remove('animate-bounce'); }, 1000);
+        }
+
+        function openPanel(type) {
+            const titleMap = { patients: 'Total Patients', doctors: 'Total Doctors', hospitals: 'Total Hospitals' };
+            document.getElementById('modal-title').innerText = titleMap[type];
+            document.getElementById('modal-subtitle').innerText = 'Click a KPI to view its summary';
+            const data = detailData[type];
+            document.getElementById('modal-content').innerHTML = data.map(([label, value]) => `
+                <div class="rounded-xl border border-slate-200 p-4 bg-slate-50">
+                    <p class="text-xs uppercase tracking-wider text-slate-500 font-semibold">${label}</p>
+                    <h4 class="mt-2 text-2xl font-bold text-slate-900">${value}</h4>
+                </div>
+            `).join('');
+            document.getElementById('details-modal').classList.remove('hidden');
+            document.getElementById('details-modal').classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            document.getElementById('details-modal').classList.add('hidden');
+            document.getElementById('details-modal').classList.remove('flex');
+        }
+    </script>
+   <ul>
+<li><a href="dashboard.html">Dashboard</a></li>
+</ul>
+</body>
+</html>

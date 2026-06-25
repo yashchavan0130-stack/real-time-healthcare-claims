@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Healthcare Claims Portal - Session Management</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+   font-family: Arial, sans-serif;
+        background-image: url("https://cdn.discordapp.com/attachments/1513839178264084591/1518272908265521384/46ea63cf-8276-4e96-ace8-38ac9cb42ff1.png?ex=6a395155&is=6a37ffd5&hm=baefa55413adbf9e02e4eca22168c9adfcef4e6438f86e2586ab233d27293feb&"); /* Change this to your image path */
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        animation: fadeInBackground 3s ease-in-out forwards;
+}
+
+.container{
+    width:400px;
+    margin:80px auto;
+    background:#fff;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 0 15px rgba(0,0,0,0.2);
+}
+
+h2{
+    text-align:center;
+    margin-bottom:20px;
+    color:#007bff;
+}
+
+input, select{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border:1px solid #ccc;
+    border-radius:5px;
+}
+
+button{
+    width:100%;
+    padding:10px;
+    border:none;
+    border-radius:5px;
+    background:#007bff;
+    color:white;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+button:hover{
+    background:#0056b3;
+}
+
+#message{
+    text-align:center;
+    margin-top:15px;
+    color:green;
+}
+
+.dashboard{
+    display:none;
+    width:500px;
+    margin:50px auto;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 0 15px rgba(0,0,0,0.2);
+}
+
+.info{
+    margin:15px 0;
+    padding:10px;
+    background:#f1f1f1;
+    border-radius:5px;
+}
+
+.logout-btn{
+    background:red;
+}
+
+.logout-btn:hover{
+    background:darkred;
+}
+</style>
+
+</head>
+<body>
+
+<!-- Login/Register Section -->
+<div class="container" id="authSection">
+
+    <h2>Healthcare Claims Portal</h2>
+
+    <input type="email" id="email" placeholder="Enter Email">
+
+    <input type="password" id="password" placeholder="Enter Password">
+
+    <select id="role">
+        <option value="Admin">Admin</option>
+        <option value="Analyst">Analyst</option>
+        <option value="Provider">Provider</option>
+    </select>
+
+    <button onclick="registerUser()">Register</button>
+
+    <button onclick="loginUser()">Login</button>
+
+    <p id="message"></p>
+
+</div>
+
+<!-- Dashboard -->
+<div class="dashboard" id="dashboard">
+
+    <h2>Healthcare Claims Analytics Dashboard</h2>
+
+    <div class="info">
+        <strong>User:</strong>
+        <span id="userEmail"></span>
+    </div>
+
+    <div class="info">
+        <strong>Role:</strong>
+        <span id="userRole"></span>
+    </div>
+
+    <div class="info">
+        <strong>Session Status:</strong>
+        Active
+    </div>
+
+    <div class="info">
+        <strong>Login Time:</strong>
+        <span id="loginTime"></span>
+    </div>
+
+    <button class="logout-btn" onclick="logoutUser()">
+        Logout
+    </button>
+<a href="index.html">logout</a> 
+</div>
+
+<script>
+
+// Register User
+function registerUser(){
+
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+    let role = document.getElementById("role").value;
+
+    if(email === "" || password === ""){
+        alert("Please fill all fields");
+        return;
+    }
+
+    let user = {
+        email: email,
+        password: password,
+        role: role
+    };
+
+    localStorage.setItem(email, JSON.stringify(user));
+
+    document.getElementById("message").innerHTML =
+    "Registration Successful!";
+}
+
+// Login User
+function loginUser(){
+
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+
+    let user = JSON.parse(localStorage.getItem(email));
+
+    if(user && user.password === password){
+
+        sessionStorage.setItem("user", email);
+        sessionStorage.setItem("role", user.role);
+        sessionStorage.setItem("loginTime", Date.now());
+
+        showDashboard();
+
+    }else{
+        document.getElementById("message").innerHTML =
+        "Invalid Email or Password!";
+    }
+}
+
+function showDashboard(){
+
+    let user = sessionStorage.getItem("user");
+
+    if(!user){
+        return;
+    }
+
+    document.getElementById("authSection").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
+
+    document.getElementById("userEmail").innerHTML =
+    sessionStorage.getItem("user");
+
+    document.getElementById("userRole").innerHTML =
+    sessionStorage.getItem("role");
+
+    let loginDate = new Date(
+        Number(sessionStorage.getItem("loginTime"))
+    );
+
+    document.getElementById("loginTime").innerHTML =
+    loginDate.toLocaleString();
+}
+
+function logoutUser(){
+
+    sessionStorage.clear();
+
+    document.getElementById("dashboard").style.display = "none";
+    document.getElementById("authSection").style.display = "block";
+}
+
+const SESSION_TIMEOUT = 60000;
+
+setInterval(() => {
+
+    let loginTime = sessionStorage.getItem("loginTime");
+
+    if(loginTime){
+
+        let currentTime = Date.now();
+
+        if(currentTime - loginTime > SESSION_TIMEOUT){
+
+            alert("Session Expired! Login Again.");
+
+            sessionStorage.clear();
+
+            location.reload();
+        }
+    }
+
+},1000);
+
+// Check Existing Session
+window.onload = function(){
+    if(sessionStorage.getItem("user")){
+        showDashboard();
+    }
+}
+
+</script>
+
+</body>
+</html>

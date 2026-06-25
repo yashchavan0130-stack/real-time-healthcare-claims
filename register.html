@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Registration - health care</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-image: url("data:image/jpeg;base64,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");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        margin: 0;
+        padding: 0;
+        animation: fadeInBackground 3s ease-in-out forwards;
+      }
+
+      @keyframes fadeInBackground {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      .register-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .card {
+        width: 100%;
+        max-width: 600px;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        box-sizing: border-box;
+        backdrop-filter: blur(10px);
+      }
+
+      .form-title {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #63788f;
+        font-weight: bold;
+      }
+
+      .form-label {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 12px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        margin-bottom: 16px;
+        box-sizing: border-box;
+      }
+
+      .form-control:focus {
+        border-color: #007bff;
+        outline: none;
+      }
+
+      .btn-primary {
+        width: 100%;
+        padding: 12px;
+        background-color: #007bff;
+        color: white;
+        font-size: 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .btn-primary:hover {
+        background-color: #000000;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="register-container">
+      <div class="card">
+        <h2 class="form-title">User Registration</h2>
+
+        <form action="index.html" method="post">
+          <div>
+            <label for="fullName" class="form-label">Full Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="fullName"
+              name="fullName"
+              placeholder="Enter your full name"
+              required
+              pattern="[A-Za-z ]+"
+              title="Only letters and spaces are allowed"
+            />
+          </div>
+
+          <div>
+            <label for="email" class="form-label">Email Address</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              name="email"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+
+          <div>
+            <label for="address" class="form-label">Address</label>
+            <textarea
+              class="form-control"
+              id="address"
+              name="address"
+              rows="3"
+              placeholder="Enter your address"
+              required
+            ></textarea>
+          </div>
+
+          <div>
+            <label for="photo" class="form-label">Upload Aadhar Card</label>
+            <input
+              type="file"
+              class="form-control"
+              id="photo"
+              name="photo"
+              accept="image/*"
+              required
+            />
+          </div>
+
+          <div>
+            <label for="username" class="form-label">Username</label>
+            <input
+              type="text"
+              class="form-control"
+              id="username"
+              name="username"
+              placeholder="Choose a username"
+              required
+            />
+          </div>
+
+          <div>
+            <label for="password" class="form-label">Password</label>
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              name="password"
+              placeholder="Create a password"
+              required
+            />
+          </div>
+
+          <div>
+            <label for="confirmPassword" class="form-label">Confirm Password</label>
+            <input
+              type="password"
+              class="form-control"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="Re-enter your password"
+              required
+            />
+          </div>
+
+          <div>
+            <button type="submit" class="btn-primary">Register</button>
+          </div>
+        </form>
+
+        <hr />
+
+        <div style="text-align: center; margin-top: 20px; font-size: 16px">
+          Already have an account?
+          <a href="index.html" style="font-weight: bold; color: blue; text-decoration: none">Login here</a>.
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const form = document.getElementById("registerForm");
+      const fullName = document.getElementById("fullName");
+      const password = document.getElementById("password");
+      const confirmPassword = document.getElementById("confirmPassword");
+
+      fullName.addEventListener("input", function () {
+        this.value = this.value.replace(/[^a-zA-Zs]/g, "");
+      });
+
+      form.addEventListener("submit", function (event) {
+        if (password.value !== confirmPassword.value) {
+          event.preventDefault();
+          alert("Password and Confirm Password do not match.");
+          return;
+        }
+
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          form.reportValidity();
+          return;
+        }
+
+        event.preventDefault();
+        window.location.href = "index.html";
+      });
+    </script>
+  </body>
+</html>
